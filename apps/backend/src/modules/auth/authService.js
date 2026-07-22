@@ -34,29 +34,9 @@ const register = async (data) => {
     email,
     password: hashedPassword,
   });
-
-  const token = jwt.sign(
-    {
-      userId: user.id,
-      workspaceId: workspace.id,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "7d",
-    }
-  );
-
-  return {
-    token,
-    user: {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      workspaceId: user.workspaceId,
-    },
-    workspace,
-  };
+return {
+  message: "Registration successful",
+};
 };
 
 const login = async ({ email, password }) => {

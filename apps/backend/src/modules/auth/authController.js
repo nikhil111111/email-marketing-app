@@ -13,8 +13,7 @@ const register = async (req, res, next) => {
 
     return res.status(201).json({
       success: true,
-      message: "Registration successful",
-      data: result,
+      ...result,
     });
   } catch (error) {
     next(error);
@@ -37,7 +36,15 @@ const login = async (req, res, next) => {
   }
 };
 
+const me = async (req, res) => {
+  return res.status(200).json({
+    success: true,
+    data: req.user,
+  });
+};
+
 module.exports = {
   register,
   login,
+  me,
 };

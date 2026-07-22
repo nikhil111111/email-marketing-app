@@ -2,6 +2,7 @@ const { sequelize } = require("../../config/databaseConfig");
 
 const Workspace = require("./workspaceModel");
 const User = require("./userModel");
+const Contact = require("./contactModel");
 
 const syncDatabase = async () => {
   try {
@@ -9,9 +10,9 @@ const syncDatabase = async () => {
       alter: true,
     });
 
-    console.log("✅ Database synchronized successfully");
+    console.log("Database synchronized successfully");
   } catch (error) {
-    console.error("❌ Database synchronization failed");
+    console.error("Database synchronization failed");
     console.error(error);
     process.exit(1);
   }
@@ -21,5 +22,6 @@ module.exports = {
   sequelize,
   Workspace,
   User,
+  Contact,
   syncDatabase,
 };
