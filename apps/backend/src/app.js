@@ -8,6 +8,7 @@ const pinoHttp = require("pino-http");
 const logger = require("./config/loggerConfig");
 const routes = require("./routes");
 const errorHandler = require("./middlewares/errorHandler");
+const audienceRoutes = require("./modules/audience/audienceRoutes");
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use(
 
 // Routes
 app.use("/api/v1", routes);
+app.use("/api/v1/audiences", audienceRoutes);
 
 // 404 Handler
 app.use((req, res) => {
