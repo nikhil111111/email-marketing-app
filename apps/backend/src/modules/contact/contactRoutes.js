@@ -1,26 +1,32 @@
 const express = require("express");
 
 const contactController = require("./contactController");
+const importController = require("./importController");
+
 const authMiddleware = require("../../middlewares/authMiddleware");
+const upload = require("./uploadMiddleware");
 
 const router = express.Router();
 
-// Protect all contact routes
+// Protect all routes
 router.use(authMiddleware);
 
-// Create Contact
+// CSV Import
+router.post(
+  "/import",
+  upload.single("file"),
+  importController.importContacts
+);
+
+// CRUD
 router.post("/", contactController.createContact);
 
-// Get All Contacts
 router.get("/", contactController.getAllContacts);
 
-// Get Contact By ID
 router.get("/:contactId", contactController.getContactById);
 
-// Update Contact
 router.put("/:contactId", contactController.updateContact);
 
-// Delete Contact
 router.delete("/:contactId", contactController.deleteContact);
 
 module.exports = router;

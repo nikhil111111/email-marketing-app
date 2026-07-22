@@ -1,3 +1,5 @@
+const { Op } = require("sequelize");
+
 const { Contact } = require("../../database/models");
 const AppError = require("../../utils/appError");
 
@@ -5,22 +7,40 @@ const createContact = async (workspaceId, data) => {
   const existingContact = await Contact.findOne({
     where: {
       workspaceId,
-      email: data.email,
+      [Op.or]: [
+        { email: data.email },
+        ...(data.phone ? [{ phone: data.phone }] : []),
+      ],
     },
   });
 
   if (existingContact) {
-    throw new AppError("Contact with this email already exists", 409);
+    if (existingContact.email === data.email) {
+      throw new AppError(
+        "Contact with this email already exists",
+        409
+      );
+    }
+
+    if (data.phone && existingContact.phone === data.phone) {
+      throw new AppError(
+        "Contact with this phone number already exists",
+        409
+      );
+    }
   }
 
-  return await Contact.create({
+  return Contact.create({
     workspaceId,
-    ...data,
+    name: data.name,
+    email: data.email,
+    phone: data.phone || null,
+    customFields: data.customFields || {},
   });
 };
 
 const getAllContacts = async (workspaceId) => {
-  return await Contact.findAll({
+  return Contact.findAll({
     where: { workspaceId },
     order: [["createdAt", "DESC"]],
   });
@@ -41,33 +61,57 @@ const getContactById = async (workspaceId, contactId) => {
   return contact;
 };
 
-const updateContact = async (workspaceId, contactId, data) => {
-  const contact = await getContactById(workspaceId, contactId);
+const updateContact = async (
+  workspaceId,
+  contactId,
+  data
+) => {
+  const contact = await getContactById(
+    workspaceId,
+    contactId
+  );
 
-  if (data.email && data.email !== contact.email) {
-    const existingContact = await Contact.findOne({
+  if (data.email || data.phone) {
+    const duplicate = await Contact.findOne({
       where: {
         workspaceId,
-        email: data.email,
+        id: {
+          [Op.ne]: contactId,
+        },
+        [Op.or]: [
+          ...(data.email ? [{ email: data.email }] : []),
+          ...(data.phone ? [{ phone: data.phone }] : []),
+        ],
       },
     });
 
-    if (existingContact) {
-      throw new AppError("Contact with this email already exists", 409);
+    if (duplicate) {
+      throw new AppError(
+        "Email or phone already exists",
+        409
+      );
     }
   }
 
-  await contact.update(data);
+  await contact.update({
+    ...data,
+    customFields:
+      data.customFields ?? contact.customFields,
+  });
 
   return contact;
 };
 
-const deleteContact = async (workspaceId, contactId) => {
-  const contact = await getContactById(workspaceId, contactId);
+const deleteContact = async (
+  workspaceId,
+  contactId
+) => {
+  const contact = await getContactById(
+    workspaceId,
+    contactId
+  );
 
   await contact.destroy();
-
-  return;
 };
 
 module.exports = {

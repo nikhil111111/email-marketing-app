@@ -22,12 +22,7 @@ const Contact = sequelize.define(
       onUpdate: "CASCADE",
     },
 
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-
-    lastName: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -45,10 +40,10 @@ const Contact = sequelize.define(
       allowNull: true,
     },
 
-    status: {
-      type: DataTypes.ENUM("subscribed", "unsubscribed"),
+    customFields: {
+      type: DataTypes.JSONB,
       allowNull: false,
-      defaultValue: "subscribed",
+      defaultValue: {},
     },
   },
   {
@@ -57,6 +52,10 @@ const Contact = sequelize.define(
       {
         unique: true,
         fields: ["workspace_id", "email"],
+      },
+      {
+        unique: true,
+        fields: ["workspace_id", "phone"],
       },
     ],
   }
