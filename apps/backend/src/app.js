@@ -9,6 +9,7 @@ const logger = require("./config/loggerConfig");
 const routes = require("./routes");
 const errorHandler = require("./middlewares/errorHandler");
 const audienceRoutes = require("./modules/audience/audienceRoutes");
+const campaignRoutes = require("./modules/campaign/campaignRoutes");
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use(
 // Routes
 app.use("/api/v1", routes);
 app.use("/api/v1/audiences", audienceRoutes);
+app.use("/api/v1/campaigns", campaignRoutes);
 
 // 404 Handler
 app.use((req, res) => {

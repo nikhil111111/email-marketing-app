@@ -3,6 +3,9 @@ const config = require("./config/appConfig");
 const logger = require("./config/loggerConfig");
 const { connectDatabase } = require("./config/databaseConfig");
 const { syncDatabase } = require("./database/models");
+require("./config/redis");
+require("./workers/campaignWorker");
+const { verifyMailer } = require("./config/mail");
 
 const startServer = async () => {
   try {
@@ -11,6 +14,8 @@ const startServer = async () => {
 
     // Sync Models
     await syncDatabase();
+
+    await verifyMailer();
 
     // Start Server
     const server = app.listen(config.PORT, () => {
