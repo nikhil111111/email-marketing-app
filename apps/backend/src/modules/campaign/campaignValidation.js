@@ -1,5 +1,12 @@
 const { z } = require("zod");
 
+const attachmentSchema = {
+  attachmentName: z.string().trim().optional(),
+  attachmentPath: z.string().trim().optional(),
+  attachmentMimeType: z.string().trim().optional(),
+  attachmentSize: z.number().int().positive().optional(),
+};
+
 const campaignSchema = z.object({
   name: z
     .string()
@@ -26,6 +33,8 @@ const campaignSchema = z.object({
     .datetime()
     .optional()
     .or(z.null()),
+
+  ...attachmentSchema,
 });
 
 const updateCampaignSchema = campaignSchema.partial();

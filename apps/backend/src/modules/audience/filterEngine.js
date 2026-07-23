@@ -73,12 +73,11 @@ const buildRule = (rule) => {
     }
 };
 
-const buildWhereClause = (workspaceId, filters) => {
+const buildWhereClause = (filters) => {
     const condition =
         filters.condition === "OR" ? Op.or : Op.and;
 
     return {
-        workspaceId,
         [condition]: filters.rules.map(buildRule),
     };
 };

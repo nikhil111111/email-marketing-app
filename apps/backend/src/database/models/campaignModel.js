@@ -60,6 +60,25 @@ const Campaign = sequelize.define(
       allowNull: true,
       field: "sent_at",
     },
+    attachmentName: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    attachmentPath: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    attachmentMimeType: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    attachmentSize: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
   },
   {
     tableName: "campaigns",

@@ -11,6 +11,15 @@ const sendCampaignEmails = async (campaign, contacts) => {
                 to: contact.email,
                 subject: campaign.subject,
                 html: campaign.htmlContent,
+                attachments: campaign.attachmentPath
+                    ? [
+                        {
+                            filename: campaign.attachmentName,
+                            path: campaign.attachmentPath,
+                            contentType: campaign.attachmentMimeType,
+                        },
+                    ]
+                    : [],
             });
 
             successCount++;
