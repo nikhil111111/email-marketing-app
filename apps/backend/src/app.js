@@ -10,12 +10,20 @@ const routes = require("./routes");
 const errorHandler = require("./middlewares/errorHandler");
 const audienceRoutes = require("./modules/audience/audienceRoutes");
 const campaignRoutes = require("./modules/campaign/campaignRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const app = express();
 
 // Security
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+); 
 app.use(compression());
 
 // Body Parsers
@@ -34,6 +42,7 @@ app.use(
 app.use("/api/v1", routes);
 app.use("/api/v1/audiences", audienceRoutes);
 app.use("/api/v1/campaigns", campaignRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
 
 // 404 Handler
 app.use((req, res) => {

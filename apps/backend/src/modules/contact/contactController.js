@@ -32,18 +32,37 @@ const createContact = async (req, res, next) => {
 };
 
 const getAllContacts = async (req, res, next) => {
-    try {
-        const contacts = await contactService.getAllContacts(
-            req.user.workspaceId
-        );
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
 
-        return res.status(200).json({
-            success: true,
-            data: contacts,
-        });
-    } catch (error) {
-        next(error);
-    }
+    const search = req.query.search || "";
+
+    const sortBy = req.query.sortBy || "createdAt";
+
+    const order =
+      req.query.order?.toUpperCase() === "ASC"
+        ? "ASC"
+        : "DESC";
+
+    const result = await contactService.getAllContacts(
+      req.user.workspaceId,
+      {
+        page,
+        limit,
+        search,
+        sortBy,
+        order,
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 const getContactById = async (req, res, next) => {
@@ -80,7 +99,7 @@ const updateContact = async (req, res, next) => {
 
         const contact = await contactService.updateContact(
             req.user.workspaceId,
-            req.params.id,
+            req.params.contactId,
             updateData
         );
 

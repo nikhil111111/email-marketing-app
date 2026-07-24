@@ -39,11 +39,69 @@ const createContact = async (workspaceId, data) => {
   });
 };
 
-const getAllContacts = async (workspaceId) => {
-  return Contact.findAll({
-    where: { workspaceId },
-    order: [["createdAt", "DESC"]],
-  });
+const getAllContacts = async (workspaceId,{
+    page = 1,
+    limit = 10,
+    search = "",
+    sortBy = "createdAt",
+    order = "DESC",
+  }
+) => {
+  const offset = (page - 1) * limit;
+
+  const where = {
+    workspaceId,
+  };
+
+  if (search) {
+    where[Op.or] = [
+      {
+        name: {
+          [Op.iLike]: `%${search}%`,
+        },
+      },
+      {
+        email: {
+          [Op.iLike]: `%${search}%`,
+        },
+      },
+      {
+        phone: {
+          [Op.iLike]: `%${search}%`,
+        },
+      },
+    ];
+  }
+
+  const allowedSortFields = [
+    "name",
+    "email",
+    "phone",
+    "createdAt",
+  ];
+
+  const finalSortBy = allowedSortFields.includes(sortBy)
+    ? sortBy
+    : "createdAt";
+
+  const { rows, count } =
+    await Contact.findAndCountAll({
+      where,
+      offset,
+      limit,
+      order: [[finalSortBy, order]],
+    });
+
+  return {
+    contacts: rows,
+
+    pagination: {
+      page,
+      limit,
+      total: count,
+      totalPages: Math.ceil(count / limit),
+    },
+  };
 };
 
 const getContactById = async (workspaceId, contactId) => {
