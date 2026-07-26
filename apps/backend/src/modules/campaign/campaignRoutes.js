@@ -14,11 +14,6 @@ router.post(
     campaignController.uploadCampaignAttachmentController
 );
 
-router.post(
-    "/upload-attachment",
-    uploadCampaignAttachment.single("attachment"),
-    campaignController.uploadCampaignAttachmentController
-);
 router.post("/", campaignController.createCampaign);
 
 router.get("/", campaignController.getAllCampaigns);
