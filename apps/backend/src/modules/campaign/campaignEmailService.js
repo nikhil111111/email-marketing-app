@@ -6,7 +6,7 @@
  *
  * Responsibilities:
  * - Iterate through campaign recipients
- * - Send email using emailService
+ * - Send email using emailservice
  * - Attach campaign files
  * - Count successful emails
  * - Count failed emails
