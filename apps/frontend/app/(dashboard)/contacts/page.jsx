@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     getContacts,
     createContact,
     updateContact,
+    importContacts,
+    deleteContact
 } from "@/services/contactService";
 
 import ContactsTable from "@/components/contacts/ContactTable";
@@ -13,7 +15,6 @@ import Pagination from "@/components/contacts/Pagination";
 import ContactModal from "@/components/contacts/ContactModal";
 import ContactForm from "@/components/contacts/ContactForm";
 import DeleteContactModal from "@/components/contacts/DeleteContactModal";
-import { deleteContact } from "@/services/contactService";
 
 export default function ContactsPage() {
     const [contacts, setContacts] = useState([]);
@@ -30,6 +31,10 @@ export default function ContactsPage() {
     const [isEditing, setIsEditing] = useState(false);
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const [uploading, setUploading] = useState(false);
+
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -107,6 +112,32 @@ export default function ContactsPage() {
         }
     };
 
+    const handleFileSelect = async (e) => {
+        const file = e.target.files?.[0];
+
+        if (!file) return;
+
+        try {
+            setUploading(true);
+
+            await importContacts(file);
+
+            await fetchContacts();
+
+            alert("Contacts imported successfully.");
+        } catch (error) {
+            alert(
+                error.response?.data?.message ||
+                "Failed to import contacts."
+            );
+        } finally {
+            setUploading(false);
+
+            // Allows selecting the same file again
+            e.target.value = "";
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div>
@@ -127,7 +158,7 @@ export default function ContactsPage() {
                     setIsEditing(false);
                     setShowModal(true);
                 }}
-                onImport={() => console.log("Import CSV")}
+                onImport={() => fileInputRef.current?.click()}
             />
 
             <ContactsTable
@@ -161,15 +192,24 @@ export default function ContactsPage() {
             </ContactModal>
 
             <DeleteContactModal
-    open={showDeleteModal}
-    contact={selectedContact}
-    loading={saving}
-    onClose={() => {
-        setShowDeleteModal(false);
-        setSelectedContact(null);
-    }}
-    onConfirm={handleDelete}
-/>
+                open={showDeleteModal}
+                contact={selectedContact}
+                loading={saving}
+                onClose={() => {
+                    setShowDeleteModal(false);
+                    setSelectedContact(null);
+                }}
+                onConfirm={handleDelete}
+            />
+
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv"
+                className="hidden"
+                onChange={handleFileSelect}
+            />
+
         </div>
     );
 }
