@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { contactSchema } from "@/lib/validators/contactValidator";
 
 export default function ContactForm({
   initialValues,
@@ -14,17 +15,48 @@ export default function ContactForm({
     company: initialValues?.customFields?.company || "",
     designation: initialValues?.customFields?.designation || "",
   });
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+    const { name, value } = e.target;
 
+    let updatedValue = value;
+
+    if (name === "phone") {
+      // Allow only digits
+      updatedValue = value.replace(/\D/g, "");
+
+      // Limit to 10 digits
+      updatedValue = updatedValue.slice(0, 10);
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: updatedValue,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const result = contactSchema.safeParse(formData);
+
+    if (!result.success) {
+      const fieldErrors = {};
+
+      result.error.errors.forEach((err) => {
+        fieldErrors[err.path[0]] = err.message;
+      });
+
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
     onSubmit(formData);
   };
 
@@ -38,6 +70,11 @@ export default function ContactForm({
         className="w-full rounded-lg border border-zinc-700 bg-zinc-800 p-3"
         required
       />
+      {errors.name && (
+        <p className="mt-1 text-sm text-red-500">
+          {errors.name}
+        </p>
+      )}
 
       <input
         name="email"
@@ -48,6 +85,11 @@ export default function ContactForm({
         className="w-full rounded-lg border border-zinc-700 bg-zinc-800 p-3"
         required
       />
+      {errors.email && (
+        <p className="mt-1 text-sm text-red-500">
+          {errors.email}
+        </p>
+      )}
 
       <input
         name="phone"
