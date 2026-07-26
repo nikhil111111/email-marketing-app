@@ -50,3 +50,15 @@ export const uploadAttachment = async (file) => {
 
   return data;
 };
+
+export const sendTestEmail = async (
+    campaignId,
+    email
+) => {
+    const response = await api.post(
+        `/campaigns/${campaignId}/send-test`,
+        { email }
+    );
+
+    return response.data;
+};

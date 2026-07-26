@@ -131,6 +131,25 @@ const uploadCampaignAttachmentController = async (req,res,next) => {
     }
 };
 
+const sendTestEmail = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    const result = await campaignService.sendTestEmail(
+      req.user.workspaceId,
+      req.params.campaignId,
+      email
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createCampaign,
   getAllCampaigns,
@@ -138,5 +157,6 @@ module.exports = {
   updateCampaign,
   deleteCampaign,
   duplicateCampaignController,
-  uploadCampaignAttachmentController
+  uploadCampaignAttachmentController,
+  sendTestEmail
 };

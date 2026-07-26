@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getAudiences } from "@/services/audienceService";
+import { sendTestEmail } from "@/services/campaignService";
 
 export default function CampaignForm({
   initialValues,
@@ -16,6 +17,9 @@ export default function CampaignForm({
     subject: "",
     htmlContent: "",
   });
+
+  const [testEmail, setTestEmail] = useState("");
+  const [sendingTest, setSendingTest] = useState(false);
 
   useEffect(() => {
     fetchAudiences();
@@ -50,6 +54,31 @@ export default function CampaignForm({
     e.preventDefault();
     onSubmit(formData);
   };
+
+  const handleSendTestEmail = async () => {
+  if (!testEmail.trim()) {
+    return alert("Enter test email");
+  }
+
+  try {
+    setSendingTest(true);
+
+    await sendTestEmail(
+      initialValues.id,
+      testEmail
+    );
+
+    alert("Test email sent successfully");
+  } catch (error) {
+    console.error(error);
+    alert(
+      error.response?.data?.message ||
+      "Failed to send test email"
+    );
+  } finally {
+    setSendingTest(false);
+  }
+};
 
   return (
     <form
@@ -128,6 +157,35 @@ export default function CampaignForm({
           required
         />
       </div>
+
+      {initialValues?.id && (
+  <div className="space-y-3 rounded-lg border border-zinc-700 p-4">
+    <h3 className="font-medium">
+      Send Test Email
+    </h3>
+
+    <input
+      type="email"
+      value={testEmail}
+      onChange={(e) =>
+        setTestEmail(e.target.value)
+      }
+      placeholder="Enter email address"
+      className="w-full rounded-lg border border-zinc-700 bg-zinc-800 p-3"
+    />
+
+    <button
+      type="button"
+      onClick={handleSendTestEmail}
+      disabled={sendingTest}
+      className="rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700 disabled:opacity-50"
+    >
+      {sendingTest
+        ? "Sending..."
+        : "Send Test Email"}
+    </button>
+  </div>
+)}
 
       <button
         type="submit"

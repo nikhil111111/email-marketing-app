@@ -1,6 +1,7 @@
 const { Campaign, Audience } = require("../../database/models");
 const AppError = require("../../utils/appError");
 const campaignQueue = require("../../queues/campaignQueue");
+const emailService = require("../../services/emailService");
 
 const enqueueCampaign = async (campaign) => {
     const delay =
@@ -197,6 +198,36 @@ const duplicateCampaign = async (
     return duplicatedCampaign;
 };
 
+const sendTestEmail = async (
+    workspaceId,
+    campaignId,
+    email
+) => {
+    const campaign = await getCampaignById(
+        workspaceId,
+        campaignId
+    );
+
+    const attachments = [];
+
+    if (campaign.attachmentPath) {
+        attachments.push({
+            filename: campaign.attachmentName,
+            path: campaign.attachmentPath,
+            contentType: campaign.attachmentMimeType,
+        });
+    }
+
+    await emailService.sendEmail({
+        to: email,
+        subject: campaign.subject,
+        html: campaign.htmlContent,
+        attachments,
+    });
+
+    return "Test email sent successfully";
+};
+
 module.exports = {
     createCampaign,
     getAllCampaigns,
@@ -204,5 +235,6 @@ module.exports = {
     updateCampaign,
     deleteCampaign,
     enqueueCampaign,
-    duplicateCampaign
+    duplicateCampaign,
+    sendTestEmail
 };
