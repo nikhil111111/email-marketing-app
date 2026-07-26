@@ -72,16 +72,17 @@ const buildRule = (rule) => {
             throw new Error(`Unsupported operator: ${operator}`);
     }
 };
-
-const buildWhereClause = (filters) => {
-    const condition =
-        filters.condition === "OR" ? Op.or : Op.and;
+const buildWhereClause = (workspaceId, filters = {}) => {
+    const {
+        condition = "AND",
+        rules = [],
+    } = filters;
 
     return {
-        [condition]: filters.rules.map(buildRule),
+        workspaceId,
+        [condition === "OR" ? Op.or : Op.and]: rules.map(buildRule),
     };
 };
-
 module.exports = {
     buildWhereClause,
 };
