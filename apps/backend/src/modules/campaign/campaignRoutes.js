@@ -26,8 +26,8 @@ router.patch("/:campaignId", campaignController.updateCampaign);
 
 router.delete("/:campaignId", campaignController.deleteCampaign);
 
-
 router.post("/:campaignId/send-test",authMiddleware,campaignController.sendTestEmail);
 
+router.post("/:campaignId/send",campaignController.sendCampaign);
 
 module.exports = router;

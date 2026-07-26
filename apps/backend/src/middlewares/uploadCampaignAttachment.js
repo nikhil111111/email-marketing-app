@@ -1,3 +1,22 @@
+/**
+ * Campaign Attachment Upload Middleware
+ *
+ * Purpose:
+ * Handles campaign attachment uploads using Multer.
+ *
+ * Responsibilities:
+ * - Accept multipart file uploads
+ * - Validate file type
+ * - Validate file size
+ * - Store uploaded attachment
+ *
+ * Called By:
+ * campaign.routes.js
+ *
+ * Executes Before:
+ * uploadCampaignAttachmentController()
+ */
+
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");

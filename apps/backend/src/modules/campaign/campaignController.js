@@ -150,6 +150,22 @@ const sendTestEmail = async (req, res, next) => {
   }
 };
 
+const sendCampaign = async (req, res, next) => {
+    try {
+        await campaignService.sendCampaign(
+            req.user.workspaceId,
+            req.params.campaignId
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Campaign queued successfully",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
   createCampaign,
   getAllCampaigns,
@@ -158,5 +174,6 @@ module.exports = {
   deleteCampaign,
   duplicateCampaignController,
   uploadCampaignAttachmentController,
-  sendTestEmail
+  sendTestEmail,
+  sendCampaign
 };

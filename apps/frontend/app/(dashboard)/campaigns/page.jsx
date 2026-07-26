@@ -7,6 +7,7 @@ import {
   duplicateCampaign,
   getCampaigns,
   updateCampaign,
+  sendCampaign
 } from "@/services/campaignService";
 
 import CampaignToolbar from "@/components/campaigns/CampaignToolbar";
@@ -122,6 +123,15 @@ export default function CampaignsPage() {
      */
   };
 
+  const handleSendCampaign = async (campaign) => {
+    try {
+      await sendCampaign(campaign.id);
+      await fetchCampaigns();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <CampaignToolbar
@@ -136,6 +146,7 @@ export default function CampaignsPage() {
         onDelete={handleDeleteClick}
         onDuplicate={handleDuplicate}
         onUploadAttachment={handleAttachmentUploaded}
+        onSend={handleSendCampaign}
       />
 
       <CampaignModal

@@ -1,3 +1,29 @@
+/**
+ * Campaign Processor
+ *
+ * Purpose:
+ * Executes the complete campaign sending workflow.
+ *
+ * Responsibilities:
+ * - Load campaign
+ * - Validate campaign status
+ * - Mark campaign as processing
+ * - Resolve audience filters
+ * - Fetch matching contacts
+ * - Trigger email sending
+ * - Update campaign status
+ * - Handle failures
+ *
+ * Called By:
+ * campaignWorker.js
+ *
+ * Calls:
+ * - buildWhereClause()
+ * - sendCampaignEmails()
+ *
+ * This file contains the core campaign execution logic.
+ */
+
 const logger = require("../../config/loggerConfig");
 const {
     Campaign,

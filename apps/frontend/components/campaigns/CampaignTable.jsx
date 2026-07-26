@@ -4,6 +4,8 @@ import {
     Pencil,
     Trash2,
     Copy,
+    send,
+    Send
 } from "lucide-react";
 import AttachmentUploader from "./AttachmentUploader";
 
@@ -33,6 +35,11 @@ const STATUS_STYLES = {
         text: "text-red-400",
         label: "Failed",
     },
+    queued: {
+        bg: "bg-cyan-500/20",
+        text: "text-cyan-400",
+        label: "Queued",
+    },
 };
 
 const formatDate = (date) => {
@@ -61,6 +68,7 @@ export default function CampaignTable({
     onDelete,
     onDuplicate,
     onUploadAttachment,
+    onSend
 }) {
     if (!campaigns.length) {
         return (
@@ -174,6 +182,17 @@ export default function CampaignTable({
                                             title="Delete Campaign"
                                         >
                                             <Trash2 size={18} />
+                                        </button>
+
+                                        <button
+                                            onClick={() => onSend(campaign)}
+                                            disabled={
+                                                ["processing", "sent"].includes(campaign.status)
+                                            }
+                                            className="rounded p-2 text-blue-500 hover:bg-blue-500/10 disabled:cursor-not-allowed disabled:opacity-40"
+                                            title="Send Campaign"
+                                        >
+                                            <Send size={18} />
                                         </button>
                                     </div>
                                 </td>

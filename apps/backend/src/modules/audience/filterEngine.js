@@ -1,3 +1,23 @@
+/**
+ * Audience Filter Engine
+ *
+ * Purpose:
+ * Converts audience filter rules into Sequelize WHERE conditions.
+ *
+ * Responsibilities:
+ * - Parse audience rules
+ * - Generate dynamic Sequelize queries
+ * - Support multiple operators and conditions
+ *
+ * Called By:
+ * campaignProcessor.js
+ *
+ * Output:
+ * Sequelize WHERE clause
+ *
+ * Flow:
+ * Audience Filters → Sequelize Query → Contact Search
+ */
 const { Op, Sequelize } = require("sequelize");
 
 const buildRule = (rule) => {

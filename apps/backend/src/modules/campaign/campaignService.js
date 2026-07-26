@@ -1,3 +1,24 @@
+/**
+ * Responsibilities:
+ * - Create campaigns
+ * - Validate audience
+ * - Update/Delete campaigns
+ * - Duplicate campaigns
+ * - Queue scheduled campaigns
+ * - Send test email
+ * - Prepare campaign for background processing
+ *
+ * Called By:
+ * campaignController
+ *
+ * Calls:
+ * - Sequelize Models
+ * - campaignQueue
+ * - emailService
+ *
+ * This is the main business layer of the campaign module.
+ */
+
 const { Campaign, Audience } = require("../../database/models");
 const AppError = require("../../utils/appError");
 const campaignQueue = require("../../queues/campaignQueue");
@@ -228,6 +249,29 @@ const sendTestEmail = async (
     return "Test email sent successfully";
 };
 
+const sendCampaign = async (
+    workspaceId,
+    campaignId
+) => {
+    const campaign = await getCampaignById(
+        workspaceId,
+        campaignId
+    );
+
+    if (campaign.status === "sent") {
+        throw new AppError(
+            "Campaign already sent",
+            400
+        );
+    }
+
+    await campaign.update({
+        status: "queued",
+    });
+
+    await enqueueCampaign(campaign);
+};
+
 module.exports = {
     createCampaign,
     getAllCampaigns,
@@ -236,5 +280,6 @@ module.exports = {
     deleteCampaign,
     enqueueCampaign,
     duplicateCampaign,
-    sendTestEmail
+    sendTestEmail,
+    sendCampaign
 };
